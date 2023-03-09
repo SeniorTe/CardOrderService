@@ -30,6 +30,7 @@ public class CardOrderServiceTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999/");
     }
 
     @AfterEach
@@ -40,7 +41,6 @@ public class CardOrderServiceTest {
 
     @Test
     void shouldReturnInfoHappyOrder() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Салтыков-Щедрин Инокентий");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998888888");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
@@ -52,58 +52,53 @@ public class CardOrderServiceTest {
 
     @Test
     void shouldReturnInfoErrorByName() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Jon");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998888888");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.className("button_theme_alfa-on-white")).click();
         String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        String actual = driver.findElement(By.cssSelector("[data-test-id=name]")).findElement(By.className("input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=name].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     void shouldReturnInfoErrorByCheckBox() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998888888");
         driver.findElement(By.className("button_theme_alfa-on-white")).click();
         String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
-        String actual = driver.findElement(By.cssSelector("[data-test-id=agreement]")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=agreement].input_invalid .checkbox__text")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     void shouldReturnInfoErrorByPhone() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("65321657");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.className("button_theme_alfa-on-white")).click();
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = driver.findElement(By.cssSelector("[data-test-id=phone]")).findElement(By.className("input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     void shouldReturnInfoErrorByNullName() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79998888888");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.className("button_theme_alfa-on-white")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = driver.findElement(By.cssSelector("[data-test-id=name]")).findElement(By.className("input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=name].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     void shouldReturnInfoErrorByNullPhone() {
-        driver.get("http://localhost:9999/");
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Петров Иван");
         driver.findElement(By.cssSelector("[data-test-id=agreement]")).click();
         driver.findElement(By.className("button_theme_alfa-on-white")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = driver.findElement(By.cssSelector("[data-test-id=phone]")).findElement(By.className("input__sub")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=phone].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 }
